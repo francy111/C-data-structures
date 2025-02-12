@@ -11,18 +11,19 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * Struct that represent a generic type vector
  *
  * Elements can be of any type
  */
-typedef struct Vector Vector;
+typedef struct vector vector;
 
 /**
- *  Creates a vector with the given size, ready to store elements that are 'elementSize' long
+ *  Creates a vector with the given size, ready to store elements that are 'element_size' long
  */
-Vector* createVector(size_t vectorSize, size_t elementSize);
+vector* vec_create(size_t vector_size, size_t element_size);
 
 /**
  * Deletes the given vector, since memory is allocated dinamically
@@ -36,10 +37,9 @@ Vector* createVector(size_t vectorSize, size_t elementSize);
  * the array would contain a copy of the struct, after deletion that memory would be free
  * However, if it was passed as a pointer to a pointer to the struct, then each 
  * array element would store the pointer to the struct, after deletion, the memory for
- * said structs would still be allocated, SCEGLIERE SE USARE UN FLAG O LASCIARE RESPONSABILITA
- *  A UTENTE
+ * said structs would still be allocated
  */
-void deleteVector(Vector** v);
+void vec_delete(vector** v);
 
 /**
  * Performs the action v[i] = x
@@ -48,7 +48,7 @@ void deleteVector(Vector** v);
  * i -th position of the vector. We assume the pointed value is of the size
  * given when creating the vector
  */
-void insertAt(Vector* v, void* x, size_t i);
+void vec_insert_at(vector* v, void* x, size_t i);
 
 /**
  * Removes the i -th element from the vector
@@ -57,7 +57,7 @@ void insertAt(Vector* v, void* x, size_t i);
  * To be more specific, it sets the whole i -th element 
  * (all the bytes of such element, based on element size) to be zero (0)
  */
-void removeAt(Vector* v, size_t i);
+void vec_remove_at(vector* v, size_t i);
 
 /**
  * Returns a pointer to the i -th element of v, so v(i)
@@ -66,43 +66,43 @@ void removeAt(Vector* v, size_t i);
  * of the first byte of the i -th element. This is returned
  * as a void pointer, which should be casted by the caller
  */
-void* getAt(Vector* v, size_t i);
+void* vec_get_at(vector* v, size_t i);
 
 /**
  * Copies the i -th element of the array, v(i) inside the buffer
  * pointed to by buf
  */
-void getAt2(Vector* v, size_t i, void* buf);
+void vec_get_2_at(vector* v, size_t i, void* buf);
 
 /**
  * Returns the vector size of v
  */
-size_t getVectorSize(Vector* v);
+size_t vec_get_size(vector* v);
 
 /**
  * Returns the element size of v
  */
-size_t getElementSize(Vector* v);
+size_t vec_get_element_size(vector* v);
 
 /**
  * Checks if the element pointed to by x is present in the vector
  *
  * The value returned is actually it's position in the array
- * from 1 to vectorSize (not from 0 to vectorSize-1)
+ * from 1 to vec_get_size (needs to be adjusted by subtracting one when accessing the vector)
  */
-short contains(Vector* v, void* x);
+short vec_contains(vector* v, void* x);
 
 /**
  * Checks if the i -th element of the vector is empty or not
  *
  * With empty we mean that each byte is set to 0
  */
-short isIndexEmpty(Vector* v, size_t i);
+short vec_is_index_empty(vector* v, size_t i);
 
 /**
  * Empties every element, but
  * doesn't deallocate the memory
  */
-void clear(Vector* v);
+void vec_clear(vector* v);
 
 #endif

@@ -282,3 +282,65 @@ void vec_clear(vector* v) {
 		memset(ptr, '\0', v->vector_size * v->element_size);
 	}
 }
+
+/**
+ * Applies the function f to every element
+ * of the vector v
+ */
+void vec_for_each(vector* v, void (*f)(void*)) {
+
+	// Parameters check
+	if (v && f) {
+
+		// Iterate the vector
+		void* tmp_buf = malloc(v->element_size);
+		if (tmp_buf) {
+
+			// Apply the function to each element
+			for (int i = 0; i < v->vector_size; i++) {
+
+				// Get a copy of the element for safety reasons
+				vec_get_2_at(v, i, tmp_buf);
+
+				// Apply the function to the copy
+				f(tmp_buf);
+			}
+			free(tmp_buf);
+		}
+	}
+	return;
+}
+
+/**
+ * Returns a vector obtained by applying
+ * the function f to every element of the vector v
+ */
+vector* vec_map(vector* v, void* (*f)(void*)) {
+	
+	vector* mapped = NULL;
+
+	// Parameters check
+	if (v && f) {
+
+		mapped = vec_create(v->vector_size, v->element_size);
+		if (mapped) {
+
+			// Iterate the vector
+			void* tmp_buf = malloc(v->element_size);
+			if (tmp_buf) {
+
+				// Apply the function to each element and insert it in the new vector
+				for (int i = 0; i < v->vector_size; i++) {
+
+					// Get a copy of the element for safety reasons
+					vec_get_2_at(v, i, tmp_buf);
+
+					// Apply the function to the copy and insert it
+					vec_insert_at(mapped, f(tmp_buf), i);
+				}
+				free(tmp_buf);
+			}
+		}
+	}
+	return mapped;
+}

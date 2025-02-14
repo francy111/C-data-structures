@@ -127,12 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\clinkedlist.c" />
+    <ClCompile Include="src\dlinkedlist.c" />
+    <ClCompile Include="src\dnode.c" />
     <ClCompile Include="src\linkedlist.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\node.c" />
     <ClCompile Include="src\vector.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\clinkedlist.h" />
+    <ClInclude Include="include\dlinkedlist.h" />
+    <ClInclude Include="include\dnode.h" />
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\vector.h" />

@@ -105,4 +105,16 @@ short vec_is_index_empty(vector* v, size_t i);
  */
 void vec_clear(vector* v);
 
+/**
+ * Applies the function f to every element
+ * of the vector v
+ */
+void vec_for_each(vector* v, void (*f)(void*));
+
+/**
+ * Returns a vector obtained by applying 
+ * the function f to every element of the vector v
+ */
+vector* vec_map(vector* v, void* (*f)(void*));
+
 #endif

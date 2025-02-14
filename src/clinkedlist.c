@@ -6,14 +6,14 @@
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "../include/linkedlist.h"
+#include "../include/clinkedlist.h"
 #include "../include/node.h"
 #include <string.h>
 
 /**
- * Struct that represent a list of elements of a generic type value
+ * Struct that represent a circular list of elements of a generic type value
  */
-typedef struct linkedlist {
+typedef struct clinkedlist {
 
 	/* The actual definition of the struct is placed
 	 * here and not in the header file to try and achieve incapsulation
@@ -33,26 +33,26 @@ typedef struct linkedlist {
 	/* Size of the elements stored in the list */
 	size_t element_size;
 
-} linkedlist;
+} clinkedlist;
 
 /**
- *  Creates a linked list ready to store elements that are as big as the given size
+ *  Creates a circular linked list ready to store elements that are as big as the given size
  */
-linkedlist* ll_create(size_t element_size) {
+clinkedlist* cl_create(size_t element_size) {
 
-	linkedlist* ll = NULL;
+	clinkedlist* cl = NULL;
 
 	if (0 < element_size && element_size <= SIZE_MAX) {
 
-		ll = (linkedlist*)malloc(sizeof(linkedlist));
+		cl = (clinkedlist*)malloc(sizeof(clinkedlist));
 
-		if (ll) {
+		if (cl) {
 
-			ll->element_size = element_size;
-			ll->element_count = 0;
+			cl->element_size = element_size;
+			cl->element_count = 0;
 		}
 	}
-	return ll;
+	return cl;
 }
 
 /**
@@ -62,18 +62,18 @@ linkedlist* ll_create(size_t element_size) {
  *   The memory allocated for the struct itself is freed
  *   The pointer to the struct is then set to NULL
  */
-void ll_delete(linkedlist** ll) {
+void cl_delete(clinkedlist** cl) {
 
 	// Access the list only if the pointer is valid
-	if (ll && *ll) {
+	if (cl && *cl) {
 
 		// Free every node
-		ll_clear(*ll);
+		cl_clear(*cl);
 
 		// Free the memory used for the whole struct
-		memset(*ll, 0, sizeof(linkedlist));
-		free(*ll);
-		*ll = NULL;
+		memset(*cl, 0, sizeof(clinkedlist));
+		free(*cl);
+		*cl = NULL;
 	}
 	return;
 }
@@ -81,44 +81,51 @@ void ll_delete(linkedlist** ll) {
 /**
  * Insert the element pointed to by x as the i -th element of the list
  */
-void ll_insert_at(linkedlist* ll, void* x, size_t i) {
+void cl_insert_at(clinkedlist* cl, void* x, size_t i) {
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (cl && x) {
 		
 		// Check if the position is correct
-		if (i <= ll->element_count) {
+		if (i <= cl->element_count) {
 
 			// Create the node
-			node* n = node_create(x, ll->element_size);
+			node* n = node_create(x, cl->element_size);
 
 			// Continue only if the node was created
 			if (n) {
 
-				// Since we need to iterate to the (i-1) -th element, the case i = 0 has to be handled differently
-				if (i == 0) {
+				/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
+				 * The cases insertTail and insertHead are the same, however, only when insearting a new head we need
+				 * to update the head pointer
+				 */
 
-					node_set_next(n, ll->head); // Connect the new node with the old head
-					ll->head = n; // And replace the list's head
-				}
+				node* tmp = cl->head;
+				size_t actual_index = (i == 0) ? cl->element_count : i;
 
-				// In every other case
-				else {
-
-					node* tmp = ll->head;
+				if (actual_index) {
 
 					// Iterate to the element before i
-					for (int j = 1; j < i; j++) {
-
+					for (int j = 1; j < actual_index; j++) {
 						tmp = node_get_next(tmp);
 					}
 
 					// Connect the node n between the node i-1 and i, becoming the new i -th node
 					node_set_next(n, node_get_next(tmp));
 					node_set_next(tmp, n);
+
+					// Update head only if the insert was in the head
+					if (i == 0) cl->head = n;
 				}
 
-				ll->element_count++;
+				// This means i was 0 and the list is empty (cl->element_count returned 0)
+				else {
+
+					// Create the single node in the list
+					cl->head = n;
+					node_set_next(cl->head, cl->head);
+				}
+				cl->element_count++;
 			}
 		}
 	}
@@ -128,12 +135,12 @@ void ll_insert_at(linkedlist* ll, void* x, size_t i) {
 /**
  * Insert the element pointed to by x as the new head of the list
  */
-void ll_insert_head(linkedlist* ll, void* x) {
+void cl_insert_head(clinkedlist* cl, void* x) {
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (cl && x) {
 
-		ll_insert_at(ll, x, 0);
+		cl_insert_at(cl, x, 0);
 	}
 	return;
 }
@@ -141,12 +148,12 @@ void ll_insert_head(linkedlist* ll, void* x) {
 /**
  * Insert the element pointed to by x as the new tail of the list
  */
-void ll_insert_tail(linkedlist* ll, void* x) {
+void cl_insert_tail(clinkedlist* cl, void* x) {
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (cl && x) {
 
-		ll_insert_at(ll, x, ll->element_count);
+		cl_insert_at(cl, x, cl->element_count);
 	}
 	return;
 }
@@ -154,46 +161,48 @@ void ll_insert_tail(linkedlist* ll, void* x) {
 /**
  * Removes the i -th element from the list
  */
-void ll_remove_at(linkedlist* ll, size_t i) {
+void cl_remove_at(clinkedlist* cl, size_t i) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (cl) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < cl->element_count) {
+			
+			/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
+			 * The cases insertTail and insertHead are the same, however, only when insearting a new head we need
+			 * to update the head pointer
+			 */
 
+			node* tmp = cl->head;
 			node* to_be_deleted = NULL;
+			i = (i == 0) ? cl->element_count : i;
 
-			// Since we need to iterate to the (i-1) -th element, the case i = 0 has to be handled differently
-			if (i == 0) {
-				
-				// Remove the head
-				to_be_deleted = ll->head;
-
-				// Logical removal, shift the head
-				ll->head = node_get_next(ll->head);
+			// Iterate to the element before i
+			for (int j = 1; j < i; j++) {
+				tmp = node_get_next(tmp);
 			}
 
-			// In every other case
+			// Node that will be removed
+			to_be_deleted = node_get_next(tmp);
+
+			// If there are more elements in the list
+			if (cl->element_count > 1) {
+
+				// Connect the node n between the node i-1 and i+1, logically removing i
+				node_set_next(tmp, node_get_next(node_get_next(tmp)));
+
+				// Update head only if we removed the head
+				if (i == cl->element_count) cl->head = node_get_next(tmp);
+			}
+			// If that was the last element in the list
 			else {
 
-				node* tmp = ll->head;
-
-				// Iterate to the element before i
-				for (int j = 1; j < i; j++) {
-
-					tmp = node_get_next(tmp);
-				}
-
-				// Logically remove the node first, then physically
-				to_be_deleted = node_get_next(tmp);
-				
-				// Logical removal, connect the node i-1 to i+1
-				node_set_next(tmp, node_get_next(node_get_next(tmp)));
+				// Set the head to null
+				cl->head = NULL;
 			}
-
 			node_delete(&to_be_deleted);
-			ll->element_count--;
+			cl->element_count--;
 		}
 	}
 	return;
@@ -202,12 +211,12 @@ void ll_remove_at(linkedlist* ll, size_t i) {
 /**
  * Removes the head from the list
  */
-void ll_remove_head(linkedlist* ll) {
+void cl_remove_head(clinkedlist* cl) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (cl) {
 
-		ll_remove_at(ll, 0);
+		cl_remove_at(cl, 0);
 	}
 	return;
 }
@@ -215,12 +224,12 @@ void ll_remove_head(linkedlist* ll) {
 /**
  * Removes the tail from the list
  */
-void ll_remove_tail(linkedlist* ll) {
+void cl_remove_tail(clinkedlist* cl) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (cl) {
 
-		ll_remove_at(ll, ll->element_count - 1);
+		cl_remove_at(cl, cl->element_count - 1);
 	}
 	return;
 }
@@ -228,18 +237,18 @@ void ll_remove_tail(linkedlist* ll) {
 /**
  * Returns a pointer to the i -th element of the list
  */
-void* ll_get_at(linkedlist* ll, size_t i) {
+void* cl_get_at(clinkedlist* cl, size_t i) {
 
 	void* ret = NULL;
 
 	// Check for pointer validity
-	if (ll) {
+	if (cl) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < cl->element_count) {
 
 			// Iterate to the i -th node
-			node* tmp = ll->head;
+			node* tmp = cl->head;
 
 			for (int j = 0; j < i; j++) {
 
@@ -258,16 +267,16 @@ void* ll_get_at(linkedlist* ll, size_t i) {
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_at(linkedlist* ll, size_t i, void* buf) {
+void cl_get_2_at(clinkedlist* cl, size_t i, void* buf) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (cl) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < cl->element_count) {
 
 			// Iterate to the i -th node
-			node* tmp = ll->head;
+			node* tmp = cl->head;
 
 			for (int j = 0; j < i; j++) {
 
@@ -275,85 +284,85 @@ void ll_get_2_at(linkedlist* ll, size_t i, void* buf) {
 			}
 
 			// Copy the value
-			memcpy(buf, node_get_value(tmp), ll->element_size);
+			memcpy(buf, node_get_value(tmp), cl->element_size);
 		}
 	}
 	return;
 }
 
 /**
- * Returns a pointer to the head of the list
+ * Returns a pointer to element stored in the the head of the list
  */
-void* ll_get_head(linkedlist* ll) {
+void* cl_get_head(clinkedlist* cl) {
 
-	return ll ? ll_get_at(ll, 0) : NULL;
+	return cl ? cl_get_at(cl, 0) : NULL;
 }
 
 /**
- * Copies the head of the list inside the buffer
+ * Copies the element stored in the head of the list inside the buffer
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_head(linkedlist* ll, void* buf) {
+void cl_get_2_head(clinkedlist* cl, void* buf) {
 
-	ll_get_2_at(ll, 0, buf);
+	cl_get_2_at(cl, 0, buf);
 	return;
 }
 
 /**
- * Returns a pointer to the tail of the list
+ * Returns a pointer to the element stored in the tail of the list
  */
-void* ll_get_tail(linkedlist* ll) {
+void* cl_get_tail(clinkedlist* cl) {
 
-	return ll ? ll_get_at(ll, ll->element_count - 1) : NULL;
+	return cl ? cl_get_at(cl, cl->element_count - 1) : NULL;
 }
 
 /**
- * Copies the tail of the list inside the buffer
+ * Copies the element stored in the tail of the list inside the buffer
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_tail(linkedlist* ll, void* buf) {
+void cl_get_2_tail(clinkedlist* cl, void* buf) {
 
-	ll_get_2_at(ll, ll->element_count - 1, buf);
+	cl_get_2_at(cl, cl->element_count - 1, buf);
 	return;
 }
 
 /**
  * Returns the number of elements of the list
  */
-size_t ll_get_size(linkedlist* ll) {
+size_t cl_get_size(clinkedlist* cl) {
 
-	return ll ? ll->element_count : 0;
+	return cl ? cl->element_count : 0;
 }
 
 /**
  * Returns the size of the elements of the list
  */
-size_t ll_get_element_size(linkedlist* ll) {
+size_t cl_get_element_size(clinkedlist* cl) {
 
-	return ll ? ll->element_size : 0;
+	return cl ? cl->element_size : 0;
 }
 
 /**
  * Checks if the element pointed to by x is present in the list
  *
  * The value returned is actually it's position in the list
- * from 1 to ll_get_size (needs to be adjusted by subtracting one when accessing the list)
+ * from 1 to cl_get_size (needs to be adjusted by subtracting one when accessing the list)
  */
-short ll_contains(linkedlist* ll, void* x) {
+short cl_contains(clinkedlist* cl, void* x) {
 
 	int isPresent = 0, index = 0;
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (cl && x) {
 
 		// Iterate through the list and compare with each element
-		node* tmp = ll->head;
-		for (index = 0; index < ll->element_count; index++) {
+		node* tmp = cl->head;
+		for (index = 0; index < cl->element_count; index++) {
 
 			// Compare the i -th element with the element pointed to by x
-			isPresent = (memcmp(x, node_get_value(tmp), ll->element_size) == 0);
+			isPresent = (memcmp(x, node_get_value(tmp), cl->element_size) == 0);
 			if (isPresent)
 				break;
 			tmp = node_get_next(tmp);
@@ -365,52 +374,52 @@ short ll_contains(linkedlist* ll, void* x) {
 /**
  * Checks whether the list contains at least one element or not
  */
-bool ll_is_empty(linkedlist* ll) {
+bool cl_is_empty(clinkedlist* cl) {
 
-	return ll ? !(ll->element_count) : true;
+	return cl ? !(cl->element_count) : true;
 }
 
 /**
  * Removed every element from the list
  * (the list struct itself is not deleted)
  */
-void ll_clear(linkedlist* ll) {
+void cl_clear(clinkedlist* cl) {
 
 	// Access the list if the pointer is valid
-	if (ll) {
+	if (cl) {
 
 		node* to_be_deleted = NULL;
-		node* tmp = ll->head;
-		for (int i = 0; i < ll->element_count; i++) {
+		node* tmp = cl->head;
+		for (int i = 0; i < cl->element_count; i++) {
 
 			to_be_deleted = tmp;
 			tmp = node_get_next(tmp);
 			node_delete(&to_be_deleted);
 		}
-		ll->head = NULL;
-		ll->element_count = 0;
+		cl->head = NULL;
+		cl->element_count = 0;
 	}
 }
 
 /**
  * Applies the function f to every element
- * of the linked list ll
+ * of the circular linked list cl
  */
-void ll_for_each(linkedlist* ll, void (*f)(void*)) {
+void cl_for_each(clinkedlist* cl, void (*f)(void*)) {
 
 	// Parameters check
-	if (ll && f) {
+	if (cl && f) {
 
 		// Iterate the list, applying the function to each element
-		node* tmp = ll->head;
-		void* tmp_buf = malloc(ll->element_size);
+		node* tmp = cl->head;
+		void* tmp_buf = malloc(cl->element_size);
 		if (tmp_buf) {
 
 			// Apply the function to each element
-			for (int i = 0; i < ll->element_count; i++) {
+			for (int i = 0; i < cl->element_count; i++) {
 
 				// Get a copy of the element for safety reasons
-				memcpy(tmp_buf, node_get_value(tmp), ll->element_size);
+				memcpy(tmp_buf, node_get_value(tmp), cl->element_size);
 
 				// Apply the function to the copy
 				f(tmp_buf);
@@ -423,32 +432,32 @@ void ll_for_each(linkedlist* ll, void (*f)(void*)) {
 }
 
 /**
- * Returns a linked list obtained by applying
- * the function f to every element of the original list ll
+ * Returns a circular linked list obtained by applying
+ * the function f to every element of the original list cl
  */
-linkedlist* ll_map(linkedlist* ll, void* (*f)(void*)) {
+clinkedlist* cl_map(clinkedlist* cl, void* (*f)(void*)) {
 
-	linkedlist* mapped = NULL;
+	clinkedlist* mapped = NULL;
 
 	// Parameters check
-	if (ll && f) {
+	if (cl && f) {
 
-		mapped = ll_create(ll->element_size);
+		mapped = cl_create(cl->element_size);
 		if (mapped) {
 
 			// Iterate the list
-			node* tmp = ll->head;
-			void* tmp_buf = malloc(ll->element_size);
+			node* tmp = cl->head;
+			void* tmp_buf = malloc(cl->element_size);
 			if (tmp_buf) {
 
 				// Apply the function to each element and insert it in the new list
-				for (int i = 0; i < ll->element_count; i++) {
+				for (int i = 0; i < cl->element_count; i++) {
 
 					// Get a copy of the element for safety reasons
-					memcpy(tmp_buf, node_get_value(tmp), ll->element_size);
+					memcpy(tmp_buf, node_get_value(tmp), cl->element_size);
 
 					// Apply the function to the copy and insert it in the list
-					ll_insert_at(mapped, f(tmp_buf), i);
+					cl_insert_at(mapped, f(tmp_buf), i);
 					tmp = node_get_next(tmp);
 				}
 				free(tmp_buf);

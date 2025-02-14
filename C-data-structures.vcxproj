@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\clinkedlist.c" />
+    <ClCompile Include="src\dclinkedlist.c" />
     <ClCompile Include="src\dlinkedlist.c" />
     <ClCompile Include="src\dnode.c" />
     <ClCompile Include="src\linkedlist.c" />
@@ -137,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\clinkedlist.h" />
+    <ClInclude Include="include\dclinkedlist.h" />
     <ClInclude Include="include\dlinkedlist.h" />
     <ClInclude Include="include\dnode.h" />
     <ClInclude Include="include\linkedlist.h" />

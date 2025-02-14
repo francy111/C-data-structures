@@ -11,7 +11,7 @@
 #include <string.h>
 
  /**
-  * Struct that represent a list of elements of a generic type value
+  * Struct that represent a double linked list of elements of a generic type value
   */
 typedef struct dlinkedlist {
 
@@ -36,7 +36,7 @@ typedef struct dlinkedlist {
 } dlinkedlist;
 
 /**
- *  Creates a doubled linked list ready to store elements that are as big as the given size
+ *  Creates a double linked list ready to store elements that are as big as the given size
  */
 dlinkedlist* dll_create(size_t element_size) {
 
@@ -384,7 +384,7 @@ void dll_clear(dlinkedlist* dll) {
 
 /**
  * Applies the function f to every element
- * of the doubled linked list dll
+ * of the double linked list dll
  */
 void dll_for_each(dlinkedlist* dll, void (*f)(void*)) {
 
@@ -413,7 +413,7 @@ void dll_for_each(dlinkedlist* dll, void (*f)(void*)) {
 }
 
 /**
- * Returns a doubled linked list obtained by applying
+ * Returns a double linked list obtained by applying
  * the function f to every element of the original list dll
  */
 dlinkedlist* dll_map(dlinkedlist* dll, void* (*f)(void*)){

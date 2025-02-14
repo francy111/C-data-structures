@@ -86,47 +86,46 @@ void cl_insert_at(clinkedlist* cl, void* x, size_t i) {
 	// Check for pointer validity
 	if (cl && x) {
 		
-		// Check if the position is correct
-		if (i <= cl->element_count) {
+		// Adjust the index to be inside the list (it's circular so we take the module of the element count)
+		i = i % (cl->element_count + 1);
 
-			// Create the node
-			node* n = node_create(x, cl->element_size);
+		// Create the node
+		node* n = node_create(x, cl->element_size);
 
-			// Continue only if the node was created
-			if (n) {
+		// Continue only if the node was created
+		if (n) {
 
-				/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
-				 * The cases insertTail and insertHead are the same, however, only when insearting a new head we need
-				 * to update the head pointer
-				 */
+			/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
+			 * The cases insertTail and insertHead are the same, however, only when inserting a new head we need
+			 * to update the head pointer
+			 */
 
-				node* tmp = cl->head;
-				size_t actual_index = (i == 0) ? cl->element_count : i;
+			node* tmp = cl->head;
+			size_t actual_index = (i == 0) ? cl->element_count : i;
 
-				if (actual_index) {
+			if (actual_index) {
 
-					// Iterate to the element before i
-					for (int j = 1; j < actual_index; j++) {
-						tmp = node_get_next(tmp);
-					}
-
-					// Connect the node n between the node i-1 and i, becoming the new i -th node
-					node_set_next(n, node_get_next(tmp));
-					node_set_next(tmp, n);
-
-					// Update head only if the insert was in the head
-					if (i == 0) cl->head = n;
+				// Iterate to the element before i
+				for (int j = 1; j < actual_index; j++) {
+					tmp = node_get_next(tmp);
 				}
 
-				// This means i was 0 and the list is empty (cl->element_count returned 0)
-				else {
+				// Connect the node n between the node i-1 and i, becoming the new i -th node
+				node_set_next(n, node_get_next(tmp));
+				node_set_next(tmp, n);
 
-					// Create the single node in the list
-					cl->head = n;
-					node_set_next(cl->head, cl->head);
-				}
-				cl->element_count++;
+				// Update head only if the insert was in the head
+				if (i == 0) cl->head = n;
 			}
+
+			// This means i was 0 and the list is empty (cl->element_count returned 0)
+			else {
+
+				// Create the single node in the list
+				cl->head = n;
+				node_set_next(cl->head, cl->head);
+			}
+			cl->element_count++;
 		}
 	}
 	return;
@@ -166,44 +165,38 @@ void cl_remove_at(clinkedlist* cl, size_t i) {
 	// Check for pointer validity
 	if (cl) {
 
-		// Check if the position is correct
-		if (i < cl->element_count) {
-			
-			/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
-			 * The cases insertTail and insertHead are the same, however, only when insearting a new head we need
-			 * to update the head pointer
-			 */
+		// Adjust the index to be inside the list (it's circular so we take the module of the element count)
+		i = i % cl->element_count;
 
-			node* tmp = cl->head;
-			node* to_be_deleted = NULL;
-			i = (i == 0) ? cl->element_count : i;
+		node* tmp = cl->head;
+		node* to_be_deleted = NULL;
+		i = (i == 0) ? cl->element_count : i;
 
-			// Iterate to the element before i
-			for (int j = 1; j < i; j++) {
-				tmp = node_get_next(tmp);
-			}
-
-			// Node that will be removed
-			to_be_deleted = node_get_next(tmp);
-
-			// If there are more elements in the list
-			if (cl->element_count > 1) {
-
-				// Connect the node n between the node i-1 and i+1, logically removing i
-				node_set_next(tmp, node_get_next(node_get_next(tmp)));
-
-				// Update head only if we removed the head
-				if (i == cl->element_count) cl->head = node_get_next(tmp);
-			}
-			// If that was the last element in the list
-			else {
-
-				// Set the head to null
-				cl->head = NULL;
-			}
-			node_delete(&to_be_deleted);
-			cl->element_count--;
+		// Iterate to the element before i
+		for (int j = 1; j < i; j++) {
+			tmp = node_get_next(tmp);
 		}
+
+		// Node that will be removed
+		to_be_deleted = node_get_next(tmp);
+
+		// If there are more elements in the list
+		if (cl->element_count > 1) {
+
+			// Connect the node n between the node i-1 and i+1, logically removing i
+			node_set_next(tmp, node_get_next(node_get_next(tmp)));
+
+			// Update head only if we removed the head
+			if (i == cl->element_count) cl->head = node_get_next(tmp);
+		}
+		// If that was the last element in the list
+		else {
+
+			// Set the head to null
+			cl->head = NULL;
+		}
+		node_delete(&to_be_deleted);
+		cl->element_count--;
 	}
 	return;
 }
@@ -244,20 +237,19 @@ void* cl_get_at(clinkedlist* cl, size_t i) {
 	// Check for pointer validity
 	if (cl) {
 
-		// Check if the position is correct
-		if (i < cl->element_count) {
+		// Adjust the index to be inside the list (it's circular so we take the module of the element count)
+		i = i % cl->element_count;
 
-			// Iterate to the i -th node
-			node* tmp = cl->head;
+		// Iterate to the i -th node
+		node* tmp = cl->head;
 
-			for (int j = 0; j < i; j++) {
+		for (int j = 0; j < i; j++) {
 
-				tmp = node_get_next(tmp);
-			}
-			
-			// Return the value
-			ret = node_get_value(tmp);
+			tmp = node_get_next(tmp);
 		}
+			
+		// Return the value
+		ret = node_get_value(tmp);
 	}
 	return ret;
 }
@@ -272,20 +264,19 @@ void cl_get_2_at(clinkedlist* cl, size_t i, void* buf) {
 	// Check for pointer validity
 	if (cl) {
 
-		// Check if the position is correct
-		if (i < cl->element_count) {
+		// Adjust the index to be inside the list (it's circular so we take the module of the element count)
+		i = i % cl->element_count;
 
-			// Iterate to the i -th node
-			node* tmp = cl->head;
+		// Iterate to the i -th node
+		node* tmp = cl->head;
 
-			for (int j = 0; j < i; j++) {
+		for (int j = 0; j < i; j++) {
 
-				tmp = node_get_next(tmp);
-			}
-
-			// Copy the value
-			memcpy(buf, node_get_value(tmp), cl->element_size);
+			tmp = node_get_next(tmp);
 		}
+
+		// Copy the value
+		memcpy(buf, node_get_value(tmp), cl->element_size);
 	}
 	return;
 }

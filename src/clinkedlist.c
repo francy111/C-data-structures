@@ -24,8 +24,8 @@ typedef struct clinkedlist {
 	 * in unallocated memory (or, still, memory that isn't 'ours')
 	 */
 
-	/* Pointer to the first node (head) of the list */
-	node* head;
+	/* Pointer to the last node (tail) of the list, as we can get the first (head) with a single assignment */
+	node* tail;
 
 	/* Number of elements present in the list */
 	size_t element_count;
@@ -96,14 +96,15 @@ void cl_insert_at(clinkedlist* cl, void* x, size_t i) {
 		if (n) {
 
 			/* Since we need to iterate to the(i - 1) - th element, the one before the first is the last
-			 * The cases insertTail and insertHead are the same, however, only when inserting a new head we need
-			 * to update the head pointer
+			 * The cases insertTail and insertHead are the same, however, only when inserting a new tail we need
+			 * to update the tail pointer
 			 */
 
-			node* tmp = cl->head;
-			size_t actual_index = (i == 0) ? cl->element_count : i;
+			node* tmp = cl->tail;
+			size_t actual_index = i % cl->element_count;
 
-			if (actual_index) {
+			// If there is at least one element
+			if (cl->element_count) {
 
 				// Iterate to the element before i
 				for (int j = 1; j < actual_index; j++) {
@@ -115,15 +116,15 @@ void cl_insert_at(clinkedlist* cl, void* x, size_t i) {
 				node_set_next(tmp, n);
 
 				// Update head only if the insert was in the head
-				if (i == 0) cl->head = n;
+				if (i == cl->element_count) cl->tail = n;
 			}
 
-			// This means i was 0 and the list is empty (cl->element_count returned 0)
+			// List is empty (cl->element_count returned 0)
 			else {
 
 				// Create the single node in the list
-				cl->head = n;
-				node_set_next(cl->head, cl->head);
+				cl->tail = n;
+				node_set_next(cl->tail, cl->tail);
 			}
 			cl->element_count++;
 		}
@@ -168,12 +169,11 @@ void cl_remove_at(clinkedlist* cl, size_t i) {
 		// Adjust the index to be inside the list (it's circular so we take the module of the element count)
 		i = i % cl->element_count;
 
-		node* tmp = cl->head;
+		node* tmp = cl->tail;
 		node* to_be_deleted = NULL;
-		i = (i == 0) ? cl->element_count : i;
 
 		// Iterate to the element before i
-		for (int j = 1; j < i; j++) {
+		for (int j = 0; j < i; j++) {
 			tmp = node_get_next(tmp);
 		}
 
@@ -186,14 +186,15 @@ void cl_remove_at(clinkedlist* cl, size_t i) {
 			// Connect the node n between the node i-1 and i+1, logically removing i
 			node_set_next(tmp, node_get_next(node_get_next(tmp)));
 
-			// Update head only if we removed the head
-			if (i == cl->element_count) cl->head = node_get_next(tmp);
+			// Update tail only if we removed the tail
+			if (i == cl->element_count - 1) cl->tail = tmp;
 		}
+
 		// If that was the last element in the list
 		else {
 
 			// Set the head to null
-			cl->head = NULL;
+			cl->tail = NULL;
 		}
 		node_delete(&to_be_deleted);
 		cl->element_count--;
@@ -241,7 +242,7 @@ void* cl_get_at(clinkedlist* cl, size_t i) {
 		i = i % cl->element_count;
 
 		// Iterate to the i -th node
-		node* tmp = cl->head;
+		node* tmp = node_get_next(cl->tail);
 
 		for (int j = 0; j < i; j++) {
 
@@ -268,7 +269,7 @@ void cl_get_2_at(clinkedlist* cl, size_t i, void* buf) {
 		i = i % cl->element_count;
 
 		// Iterate to the i -th node
-		node* tmp = cl->head;
+		node* tmp = node_get_next(cl->tail);
 
 		for (int j = 0; j < i; j++) {
 
@@ -349,7 +350,7 @@ short cl_contains(clinkedlist* cl, void* x) {
 	if (cl && x) {
 
 		// Iterate through the list and compare with each element
-		node* tmp = cl->head;
+		node* tmp = node_get_next(cl->tail);
 		for (index = 0; index < cl->element_count; index++) {
 
 			// Compare the i -th element with the element pointed to by x
@@ -380,14 +381,14 @@ void cl_clear(clinkedlist* cl) {
 	if (cl) {
 
 		node* to_be_deleted = NULL;
-		node* tmp = cl->head;
+		node* tmp = node_get_next(cl->tail);
 		for (int i = 0; i < cl->element_count; i++) {
 
 			to_be_deleted = tmp;
 			tmp = node_get_next(tmp);
 			node_delete(&to_be_deleted);
 		}
-		cl->head = NULL;
+		cl->tail = NULL;
 		cl->element_count = 0;
 	}
 }
@@ -402,7 +403,7 @@ void cl_for_each(clinkedlist* cl, void (*f)(void*)) {
 	if (cl && f) {
 
 		// Iterate the list, applying the function to each element
-		node* tmp = cl->head;
+		node* tmp = node_get_next(cl->tail);
 		void* tmp_buf = malloc(cl->element_size);
 		if (tmp_buf) {
 
@@ -437,7 +438,7 @@ clinkedlist* cl_map(clinkedlist* cl, void* (*f)(void*)) {
 		if (mapped) {
 
 			// Iterate the list
-			node* tmp = cl->head;
+			node* tmp = node_get_next(cl->tail);
 			void* tmp_buf = malloc(cl->element_size);
 			if (tmp_buf) {
 

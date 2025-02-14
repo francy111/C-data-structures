@@ -129,20 +129,26 @@
   <ItemGroup>
     <ClCompile Include="src\clinkedlist.c" />
     <ClCompile Include="src\dclinkedlist.c" />
+    <ClCompile Include="src\deque.c" />
     <ClCompile Include="src\dlinkedlist.c" />
     <ClCompile Include="src\dnode.c" />
     <ClCompile Include="src\linkedlist.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\node.c" />
+    <ClCompile Include="src\queue.c" />
+    <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\vector.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\clinkedlist.h" />
     <ClInclude Include="include\dclinkedlist.h" />
+    <ClInclude Include="include\deque.h" />
     <ClInclude Include="include\dlinkedlist.h" />
     <ClInclude Include="include\dnode.h" />
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
+    <ClInclude Include="include\queue.h" />
+    <ClInclude Include="include\stack.h" />
     <ClInclude Include="include\vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

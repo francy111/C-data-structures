@@ -136,6 +136,7 @@
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\node.c" />
     <ClCompile Include="src\queue.c" />
+    <ClCompile Include="src\ringbuffer.c" />
     <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\vector.c" />
   </ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="include\linkedlist.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\queue.h" />
+    <ClInclude Include="include\ringbuffer.h" />
     <ClInclude Include="include\stack.h" />
     <ClInclude Include="include\vector.h" />
   </ItemGroup>

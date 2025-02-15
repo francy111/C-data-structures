@@ -28,7 +28,7 @@ queue* queue_create(size_t element_size);
 /**
  * Deletes the given queue, since memory is allocated dinamically
  * the following actions are performed:
- *   The memory allocated for storing the actual element is freed
+ *   The memory allocated for storing the actual elements is freed
  *   The memory allocated for the struct itself is freed
  *   The pointer to the struct is then set to NULL
  */
@@ -68,6 +68,12 @@ size_t queue_get_size(queue* q);
  * Returns the size of each element of the queue
  */
 size_t queue_get_element_size(queue* q);
+
+/**
+ * Removed every element from the queue
+ * (the queue struct itself is not deleted)
+ */
+void queue_clear(queue* q);
 
 /**
  * Checks whether or not the queue is empty

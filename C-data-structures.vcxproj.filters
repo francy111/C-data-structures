@@ -48,6 +48,9 @@
     <ClCompile Include="src\deque.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ringbuffer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\vector.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\deque.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ringbuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

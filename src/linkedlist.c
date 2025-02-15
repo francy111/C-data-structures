@@ -367,7 +367,7 @@ short ll_contains(linkedlist* ll, void* x) {
  */
 bool ll_is_empty(linkedlist* ll) {
 
-	return ll ? !(ll->element_count) : true;
+	return ll ? !(ll->element_count) : false;
 }
 
 /**

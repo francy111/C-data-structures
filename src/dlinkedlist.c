@@ -357,7 +357,7 @@ short dll_contains(dlinkedlist* dll, void* x) {
  */
 bool dll_is_empty(dlinkedlist* dll) {
 
-	return dll ? !(dll->element_count) : true;
+	return dll ? !(dll->element_count) : false;
 }
 
 /**

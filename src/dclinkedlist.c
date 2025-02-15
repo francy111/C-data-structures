@@ -353,7 +353,7 @@ short dcl_contains(dclinkedlist* dcl, void* x) {
  */
 bool dcl_is_empty(dclinkedlist* dcl) {
 
-	return dcl ? !(dcl->element_count) : true;
+	return dcl ? !(dcl->element_count) : false;
 }
 
 /**

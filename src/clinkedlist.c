@@ -368,7 +368,7 @@ short cl_contains(clinkedlist* cl, void* x) {
  */
 bool cl_is_empty(clinkedlist* cl) {
 
-	return cl ? !(cl->element_count) : true;
+	return cl ? !(cl->element_count) : false;
 }
 
 /**

@@ -28,7 +28,7 @@ stack* stack_create(size_t element_size);
 /**
  * Deletes the given stack, since memory is allocated dinamically
  * the following actions are performed:
- *   The memory allocated for storing the actual element is freed
+ *   The memory allocated for storing the actual elements is freed
  *   The memory allocated for the struct itself is freed
  *   The pointer to the struct is then set to NULL
  */
@@ -68,6 +68,12 @@ size_t stack_get_size(stack* s);
  * Returns the size of each element of the stack
  */
 size_t stack_get_element_size(stack* s);
+
+/**
+ * Removed every element from the stack
+ * (the stack struct itself is not deleted)
+ */
+void stack_clear(stack* s);
 
 /**
  * Checks whether or not the stack is empty

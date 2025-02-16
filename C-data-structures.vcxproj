@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\bitset.c" />
     <ClCompile Include="src\clinkedlist.c" />
     <ClCompile Include="src\dclinkedlist.c" />
     <ClCompile Include="src\deque.c" />
@@ -137,10 +138,13 @@
     <ClCompile Include="src\node.c" />
     <ClCompile Include="src\queue.c" />
     <ClCompile Include="src\ringbuffer.c" />
+    <ClCompile Include="src\skiplist.c" />
+    <ClCompile Include="src\snode.c" />
     <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\vector.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\bitset.h" />
     <ClInclude Include="include\clinkedlist.h" />
     <ClInclude Include="include\dclinkedlist.h" />
     <ClInclude Include="include\deque.h" />
@@ -150,6 +154,8 @@
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\queue.h" />
     <ClInclude Include="include\ringbuffer.h" />
+    <ClInclude Include="include\skiplist.h" />
+    <ClInclude Include="include\snode.h" />
     <ClInclude Include="include\stack.h" />
     <ClInclude Include="include\vector.h" />
   </ItemGroup>

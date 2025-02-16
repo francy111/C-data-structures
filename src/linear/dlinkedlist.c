@@ -6,14 +6,14 @@
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "../include/linkedlist.h"
-#include "../include/node.h"
+#include "../../include/linear/dlinkedlist.h"
+#include "../../include/linear/dnode.h"
 #include <string.h>
 
-/**
- * Struct that represent a list of elements of a generic type value
- */
-typedef struct linkedlist {
+ /**
+  * Struct that represent a double linked list of elements of a generic type value
+  */
+typedef struct dlinkedlist {
 
 	/* The actual definition of the struct is placed
 	 * here and not in the header file to try and achieve incapsulation
@@ -24,8 +24,8 @@ typedef struct linkedlist {
 	 * in unallocated memory (or, still, memory that isn't 'ours')
 	 */
 
-	/* Pointer to the first node (head) of the list */
-	node* head;
+	 /* Pointer to the first node (head) of the list */
+	dnode* head;
 
 	/* Number of elements present in the list */
 	size_t element_count;
@@ -33,26 +33,26 @@ typedef struct linkedlist {
 	/* Size of the elements stored in the list */
 	size_t element_size;
 
-} linkedlist;
+} dlinkedlist;
 
 /**
- *  Creates a linked list ready to store elements that are as big as the given size
+ *  Creates a double linked list ready to store elements that are as big as the given size
  */
-linkedlist* ll_create(size_t element_size) {
+dlinkedlist* dll_create(size_t element_size) {
 
-	linkedlist* ll = NULL;
+	dlinkedlist* dll = NULL;
 
 	if (0 < element_size && element_size <= SIZE_MAX) {
 
-		ll = (linkedlist*)malloc(sizeof(linkedlist));
+		dll = (dlinkedlist*)malloc(sizeof(dlinkedlist));
 
-		if (ll) {
+		if (dll) {
 
-			ll->element_size = element_size;
-			ll->element_count = 0;
+			dll->element_size = element_size;
+			dll->element_count = 0;
 		}
 	}
-	return ll;
+	return dll;
 }
 
 /**
@@ -62,18 +62,18 @@ linkedlist* ll_create(size_t element_size) {
  *   The memory allocated for the struct itself is freed
  *   The pointer to the struct is then set to NULL
  */
-void ll_delete(linkedlist** ll) {
+void dll_delete(dlinkedlist** dll) {
 
 	// Access the list only if the pointer is valid
-	if (ll && *ll) {
+	if (dll && *dll) {
 
 		// Free every node
-		ll_clear(*ll);
+		dll_clear(*dll);
 
 		// Free the memory used for the whole struct
-		memset(*ll, 0, sizeof(linkedlist));
-		free(*ll);
-		*ll = NULL;
+		memset(*dll, 0, sizeof(dlinkedlist));
+		free(*dll);
+		*dll = NULL;
 	}
 	return;
 }
@@ -81,44 +81,48 @@ void ll_delete(linkedlist** ll) {
 /**
  * Insert the element pointed to by x as the i -th element of the list
  */
-void ll_insert_at(linkedlist* ll, void* x, size_t i) {
+void dll_insert_at(dlinkedlist* dll, void* x, size_t i) {
 
 	// Check for pointer validity
-	if (ll && x) {
-		
+	if (dll && x) {
+
 		// Check if the position is correct
-		if (i <= ll->element_count) {
+		if (i <= dll->element_count) {
 
 			// Create the node
-			node* n = node_create(x, ll->element_size);
+			dnode* dn = dnode_create(x, dll->element_size);
 
 			// Continue only if the node was created
-			if (n) {
+			if (dn) {
 
 				// Since we need to iterate to the (i-1) -th element, the case i = 0 has to be handled differently
 				if (i == 0) {
 
-					node_set_next(n, ll->head); // Connect the new node with the old head
-					ll->head = n; // And replace the list's head
+					dnode_set_next(dn, dll->head); // Connect the new node with the old head
+					dnode_set_prev(dll->head, dn);
+					dll->head = dn; // And replace the list's head
 				}
 
 				// In every other case
 				else {
 
-					node* tmp = ll->head;
+					dnode* tmp = dll->head;
 
 					// Iterate to the element before i
 					for (int j = 1; j < i; j++) {
 
-						tmp = node_get_next(tmp);
+						tmp = dnode_get_next(tmp);
 					}
 
 					// Connect the node n between the node i-1 and i, becoming the new i -th node
-					node_set_next(n, node_get_next(tmp));
-					node_set_next(tmp, n);
+					dnode_set_next(dn, dnode_get_next(tmp));
+					if (i < dll->element_count) dnode_set_prev(dnode_get_next(tmp), dn);
+
+					dnode_set_next(tmp, dn);
+					dnode_set_prev(dn, tmp);
 				}
 
-				ll->element_count++;
+				dll->element_count++;
 			}
 		}
 	}
@@ -128,12 +132,12 @@ void ll_insert_at(linkedlist* ll, void* x, size_t i) {
 /**
  * Insert the element pointed to by x as the new head of the list
  */
-void ll_insert_head(linkedlist* ll, void* x) {
+void dll_insert_head(dlinkedlist* dll, void* x) {
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (dll && x) {
 
-		ll_insert_at(ll, x, 0);
+		dll_insert_at(dll, x, 0);
 	}
 	return;
 }
@@ -141,12 +145,12 @@ void ll_insert_head(linkedlist* ll, void* x) {
 /**
  * Insert the element pointed to by x as the new tail of the list
  */
-void ll_insert_tail(linkedlist* ll, void* x) {
+void dll_insert_tail(dlinkedlist* dll, void* x) {
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (dll && x) {
 
-		ll_insert_at(ll, x, ll->element_count);
+		dll_insert_at(dll, x, dll->element_count);
 	}
 	return;
 }
@@ -154,46 +158,32 @@ void ll_insert_tail(linkedlist* ll, void* x) {
 /**
  * Removes the i -th element from the list
  */
-void ll_remove_at(linkedlist* ll, size_t i) {
+void dll_remove_at(dlinkedlist* dll, size_t i) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (dll) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < dll->element_count) {
 
-			node* to_be_deleted = NULL;
+			// Iterate until the i -th element
+			dnode* to_be_deleted = dll->head;
+			for (int j = 0; j < i; j++) {
 
-			// Since we need to iterate to the (i-1) -th element, the case i = 0 has to be handled differently
-			if (i == 0) {
-				
-				// Remove the head
-				to_be_deleted = ll->head;
-
-				// Logical removal, shift the head
-				ll->head = node_get_next(ll->head);
+				to_be_deleted = dnode_get_next(to_be_deleted);
 			}
 
-			// In every other case
-			else {
+			/* We are now at the position i, we remove this node by connecting the one before with the one after
+			 *
+			 * First we connect the node i-1 with the node i+1 to logically delete the node i
+			 * Then, we physically free the memory used for it
+			 */
+			if (i > 0) dnode_set_next(dnode_get_prev(to_be_deleted), dnode_get_next(to_be_deleted)); // Only if not removing the head
+			else dll->head = dnode_get_next(to_be_deleted); // Update head if removed
+			if (i < dll->element_count - 1) dnode_set_prev(dnode_get_next(to_be_deleted), dnode_get_prev(to_be_deleted)); // Only if not removing the tail
 
-				node* tmp = ll->head;
-
-				// Iterate to the element before i
-				for (int j = 1; j < i; j++) {
-
-					tmp = node_get_next(tmp);
-				}
-
-				// Logically remove the node first, then physically
-				to_be_deleted = node_get_next(tmp);
-				
-				// Logical removal, connect the node i-1 to i+1
-				node_set_next(tmp, node_get_next(node_get_next(tmp)));
-			}
-
-			node_delete(&to_be_deleted);
-			ll->element_count--;
+			dnode_delete(&to_be_deleted);
+			dll->element_count--;
 		}
 	}
 	return;
@@ -202,12 +192,12 @@ void ll_remove_at(linkedlist* ll, size_t i) {
 /**
  * Removes the head from the list
  */
-void ll_remove_head(linkedlist* ll) {
+void dll_remove_head(dlinkedlist* dll) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (dll) {
 
-		ll_remove_at(ll, 0);
+		dll_remove_at(dll, 0);
 	}
 	return;
 }
@@ -215,12 +205,12 @@ void ll_remove_head(linkedlist* ll) {
 /**
  * Removes the tail from the list
  */
-void ll_remove_tail(linkedlist* ll) {
+void dll_remove_tail(dlinkedlist* dll) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (dll) {
 
-		ll_remove_at(ll, ll->element_count - 1);
+		dll_remove_at(dll, dll->element_count - 1);
 	}
 	return;
 }
@@ -228,26 +218,26 @@ void ll_remove_tail(linkedlist* ll) {
 /**
  * Returns a pointer to the i -th element of the list
  */
-void* ll_get_at(linkedlist* ll, size_t i) {
+void* dll_get_at(dlinkedlist* dll, size_t i) {
 
 	void* ret = NULL;
 
 	// Check for pointer validity
-	if (ll) {
+	if (dll) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < dll->element_count) {
 
 			// Iterate to the i -th node
-			node* tmp = ll->head;
+			dnode* tmp = dll->head;
 
 			for (int j = 0; j < i; j++) {
 
-				tmp = node_get_next(tmp);
+				tmp = dnode_get_next(tmp);
 			}
-			
+
 			// Return the value
-			ret = node_get_value(tmp);
+			ret = dnode_get_value(tmp);
 		}
 	}
 	return ret;
@@ -258,35 +248,35 @@ void* ll_get_at(linkedlist* ll, size_t i) {
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_at(linkedlist* ll, size_t i, void* buf) {
+void dll_get_2_at(dlinkedlist* dll, size_t i, void* buf) {
 
 	// Check for pointer validity
-	if (ll) {
+	if (dll) {
 
 		// Check if the position is correct
-		if (i < ll->element_count) {
+		if (i < dll->element_count) {
 
 			// Iterate to the i -th node
-			node* tmp = ll->head;
+			dnode* tmp = dll->head;
 
 			for (int j = 0; j < i; j++) {
 
-				tmp = node_get_next(tmp);
+				tmp = dnode_get_next(tmp);
 			}
 
 			// Copy the value
-			memcpy(buf, node_get_value(tmp), ll->element_size);
+			memcpy(buf, dnode_get_value(tmp), dll->element_size);
 		}
 	}
 	return;
 }
 
 /**
- * Returns a pointer to the head of the list
+ * Returns a pointer to element stored in the the head of the list
  */
-void* ll_get_head(linkedlist* ll) {
+void* dll_get_head(dlinkedlist* dll) {
 
-	return ll ? ll_get_at(ll, 0) : NULL;
+	return dll ? dll_get_at(dll, 0) : NULL;
 }
 
 /**
@@ -294,18 +284,18 @@ void* ll_get_head(linkedlist* ll) {
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_head(linkedlist* ll, void* buf) {
+void dll_get_2_head(dlinkedlist* dll, void* buf) {
 
-	ll_get_2_at(ll, 0, buf);
+	dll_get_2_at(dll, 0, buf);
 	return;
 }
 
 /**
- * Returns a pointer to the tail of the list
+ * Returns a pointer to element stored in the the tail of the list
  */
-void* ll_get_tail(linkedlist* ll) {
+void* dll_get_tail(dlinkedlist* dll) {
 
-	return ll ? ll_get_at(ll, ll->element_count - 1) : NULL;
+	return dll ? dll_get_at(dll, dll->element_count - 1) : NULL;
 }
 
 /**
@@ -313,50 +303,50 @@ void* ll_get_tail(linkedlist* ll) {
  * pointed to by buf (we assume it has already been allocated,
  * and of the correct size)
  */
-void ll_get_2_tail(linkedlist* ll, void* buf) {
+void dll_get_2_tail(dlinkedlist* dll, void* buf) {
 
-	ll_get_2_at(ll, ll->element_count - 1, buf);
+	dll_get_2_at(dll, dll->element_count - 1, buf);
 	return;
 }
 
 /**
  * Returns the number of elements of the list
  */
-size_t ll_get_size(linkedlist* ll) {
+size_t dll_get_size(dlinkedlist* dll) {
 
-	return ll ? ll->element_count : 0;
+	return dll ? dll->element_count : 0;
 }
 
 /**
  * Returns the size of the elements of the list
  */
-size_t ll_get_element_size(linkedlist* ll) {
+size_t dll_get_element_size(dlinkedlist* dll) {
 
-	return ll ? ll->element_size : 0;
+	return dll ? dll->element_size : 0;
 }
 
 /**
  * Checks if the element pointed to by x is present in the list
  *
  * The value returned is actually it's position in the list
- * from 1 to ll_get_size (needs to be adjusted by subtracting one when accessing the list)
+ * from 1 to dll_get_size (needs to be adjusted by subtracting one when accessing the list)
  */
-short ll_contains(linkedlist* ll, void* x) {
+short dll_contains(dlinkedlist* dll, void* x) {
 
 	int isPresent = 0, index = 0;
 
 	// Check for pointer validity
-	if (ll && x) {
+	if (dll && x) {
 
 		// Iterate through the list and compare with each element
-		node* tmp = ll->head;
-		for (index = 0; index < ll->element_count; index++) {
+		dnode* tmp = dll->head;
+		for (index = 0; index < dll->element_count; index++) {
 
 			// Compare the i -th element with the element pointed to by x
-			isPresent = (memcmp(x, node_get_value(tmp), ll->element_size) == 0);
+			isPresent = (memcmp(x, dnode_get_value(tmp), dll->element_size) == 0);
 			if (isPresent)
 				break;
-			tmp = node_get_next(tmp);
+			tmp = dnode_get_next(tmp);
 		}
 	}
 	return isPresent ? index + 1 : 0;
@@ -365,56 +355,56 @@ short ll_contains(linkedlist* ll, void* x) {
 /**
  * Checks whether the list contains at least one element or not
  */
-bool ll_is_empty(linkedlist* ll) {
+bool dll_is_empty(dlinkedlist* dll) {
 
-	return ll ? !(ll->element_count) : false;
+	return dll ? !(dll->element_count) : false;
 }
 
 /**
  * Removed every element from the list
  * (the list struct itself is not deleted)
  */
-void ll_clear(linkedlist* ll) {
+void dll_clear(dlinkedlist* dll) {
 
 	// Access the list if the pointer is valid
-	if (ll) {
+	if (dll) {
 
-		node* to_be_deleted = NULL;
-		node* tmp = ll->head;
-		for (int i = 0; i < ll->element_count; i++) {
+		dnode* to_be_deleted = NULL;
+		dnode* tmp = dll->head;
+		for (int i = 0; i < dll->element_count; i++) {
 
 			to_be_deleted = tmp;
-			tmp = node_get_next(tmp);
-			node_delete(&to_be_deleted);
+			tmp = dnode_get_next(tmp);
+			dnode_delete(&to_be_deleted);
 		}
-		ll->head = NULL;
-		ll->element_count = 0;
+		dll->head = NULL;
+		dll->element_count = 0;
 	}
 }
 
 /**
  * Applies the function f to every element
- * of the linked list ll
+ * of the double linked list dll
  */
-void ll_for_each(linkedlist* ll, void (*f)(void*)) {
+void dll_for_each(dlinkedlist* dll, void (*f)(void*)) {
 
 	// Parameters check
-	if (ll && f) {
+	if (dll && f) {
 
 		// Iterate the list, applying the function to each element
-		node* tmp = ll->head;
-		void* tmp_buf = malloc(ll->element_size);
+		dnode* tmp = dll->head;
+		void* tmp_buf = malloc(dll->element_size);
 		if (tmp_buf) {
 
 			// Apply the function to each element
-			for (int i = 0; i < ll->element_count; i++) {
+			for (int i = 0; i < dll->element_count; i++) {
 
 				// Get a copy of the element for safety reasons
-				memcpy(tmp_buf, node_get_value(tmp), ll->element_size);
+				memcpy(tmp_buf, dnode_get_value(tmp), dll->element_size);
 
 				// Apply the function to the copy
 				f(tmp_buf);
-				tmp = node_get_next(tmp);
+				tmp = dnode_get_next(tmp);
 			}
 			free(tmp_buf);
 		}
@@ -423,33 +413,33 @@ void ll_for_each(linkedlist* ll, void (*f)(void*)) {
 }
 
 /**
- * Returns a linked list obtained by applying
- * the function f to every element of the original list ll
+ * Returns a double linked list obtained by applying
+ * the function f to every element of the original list dll
  */
-linkedlist* ll_map(linkedlist* ll, void* (*f)(void*)) {
-
-	linkedlist* mapped = NULL;
+dlinkedlist* dll_map(dlinkedlist* dll, void* (*f)(void*)){
+	
+	dlinkedlist* mapped = NULL;
 
 	// Parameters check
-	if (ll && f) {
+	if (dll && f) {
 
-		mapped = ll_create(ll->element_size);
+		mapped = dll_create(dll->element_size);
 		if (mapped) {
 
 			// Iterate the list
-			node* tmp = ll->head;
-			void* tmp_buf = malloc(ll->element_size);
+			dnode* tmp = dll->head;
+			void* tmp_buf = malloc(dll->element_size);
 			if (tmp_buf) {
 
 				// Apply the function to each element and insert it in the new list
-				for (int i = 0; i < ll->element_count; i++) {
+				for (int i = 0; i < dll->element_count; i++) {
 
 					// Get a copy of the element for safety reasons
-					memcpy(tmp_buf, node_get_value(tmp), ll->element_size);
+					memcpy(tmp_buf, dnode_get_value(tmp), dll->element_size);
 
 					// Apply the function to the copy and insert it in the list
-					ll_insert_at(mapped, f(tmp_buf), i);
-					tmp = node_get_next(tmp);
+					dll_insert_at(mapped, f(tmp_buf), i);
+					tmp = dnode_get_next(tmp);
 				}
 				free(tmp_buf);
 			}

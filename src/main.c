@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/vector.h"
-#include "../include/linkedlist.h"
+#include "../include/linear/vector.h"
+#include "../include/linear/linkedlist.h"
 
 void printint(void* val);
 void* double_int(void* val);

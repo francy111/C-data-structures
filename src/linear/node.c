@@ -6,21 +6,19 @@
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "../include/dnode.h"
+#include "../../include/linear/node.h"
 #include <string.h>
 
 /**
  * Struct that represent a node that can store
- * a generic type value, and has pointers
- * to both the previous and next element
+ * a generic type value
  *
- * Used in Double Linked Lists and Double Circular Linked Lists
+ * Used in Linked Lists and Circular Linked List
  *
- * The node itself has three components, a value stored,
- * a pointer to the next node in the list, and a pointer
- * to the previous node
+ * The node itself has two components, a value stored, and
+ * a pointer to the next node in the list
  */
-typedef struct dnode {
+typedef struct node {
 
 	/* The actual definition of the struct is placed
 	 * here and not in the header file to try and achieve incapsulation
@@ -37,16 +35,11 @@ typedef struct dnode {
 	  */
 	void* ptr;
 
-	/* Pointer to the previous node
-	 * (as in previous in a list)
-	 */
-	dnode* prev;
-
 	/* Pointer to the next node 
 	 * (as in next in a list)
 	 */
-	dnode* next;
-} dnode;
+	node* next;
+} node;
 
 /**
  * Creates a node that will store the content pointed to by 'value'
@@ -54,41 +47,41 @@ typedef struct dnode {
  *
  * eg. to store an int, value_size = sizeof(int)
  */
-dnode* dnode_create(void* value, size_t value_size) {
+node* node_create(void* value, size_t value_size) {
 
-	dnode* dn = NULL;
+	node* n = NULL;
 
 	// Check if the size is reasonable
 	if (value_size <= SIZE_MAX) {
 
 		// Allocate memory for the node struct
-		dn = (dnode*)malloc(sizeof(dnode));
+		n = (node*)malloc(sizeof(node));
 
 		// If it was allocated
-		if (dn) {
+		if (n) {
 
 			// Allocate memory for the value
-			dn->ptr = malloc(value_size);
+			n->ptr = malloc(value_size);
 
 			// If it was allocated
-			if (dn->ptr) {
+			if (n->ptr) {
 
 				// Initialize the fields
-				memcpy(dn->ptr, value, value_size);
-				dn->prev = NULL;
-				dn->next = NULL;
+				memcpy(n->ptr, value, value_size);
+				n->next = NULL;
 			}
 
 			// Otherwise
 			else {
 
 				// Cancel the creation, free the memory used for the struct
-				free(dn);
-				dn = NULL;
+				free(n);
+				n = NULL;
 			}
 		}
 	}
-	return dn;
+
+	return n;
 }
 
 /**
@@ -97,18 +90,18 @@ dnode* dnode_create(void* value, size_t value_size) {
  * It frees the memory used to store the value, then
  * the memory used for the struct itself
  */
-void dnode_delete(dnode** dn) {
+void node_delete(node** n) {
 
 	// Check if the ptr fields needs to be freed as well
-	if (dn != NULL && *dn != NULL) {
+	if (n != NULL && *n != NULL) {
 
 		// Free the memory used for the value
-		free((*dn)->ptr);
+		free((*n)->ptr);
 
 		// Free the memory used for the struct
-		memset(*dn, 0, sizeof(dnode));
-		free(*dn);
-		*dn = NULL;
+		memset(*n, 0, sizeof(node));
+		free(*n);
+		*n = NULL;
 	}
 	return;
 }
@@ -120,39 +113,37 @@ void dnode_delete(dnode** dn) {
  * Useful for returning structs, without
  * the need to copy all of its content
  */
-void* dnode_get_value(dnode* dn) {
+void* node_get_value(node* n) {
 
-	return dn ? dn->ptr : NULL;
+	return n ? n->ptr : NULL;
 }
 
 /**
- * Returns a pointer to the next node
+ * Returns a pointer to the next node, that is
+ * the node pointed to by this one
  */
-dnode* dnode_get_next(dnode* dn) {
+node* node_get_next(node* n) {
 
-	return dn ? dn->next : NULL;
+	node* next = NULL;
+
+	// Integrity check
+	if (n) {
+		next = n->next;
+	}
+
+	return next;
 }
 
 /**
- * Sets 'next' as the next node
+ * Sets 'next' as the next node, that is the
+ * node pointed to by this one
  */
-void dnode_set_next(dnode* dn, dnode* next) {
+void node_set_next(node* n, node* next) {
 
-	if (dn) dn->next = next;
-}
+	// Integrity check
+	if (n) {
+		n->next = next;
+	}
 
-/**
- * Returns a pointer to the previous node
- */
-dnode* dnode_get_prev(dnode* dn) {
-
-	return dn ? dn->prev : NULL;
-}
-
-/**
- * Sets 'prev' as the previous node
- */
-void dnode_set_prev(dnode* dn, dnode* prev) {
-
-	if (dn) dn->prev = prev;
+	return;
 }

@@ -77,11 +77,13 @@ void BST_delete(BST** bst) {
 /**
  * Inserts the value x in the BST, according to the compare function
  */
-void BST_insert(BST* bst, void* x) {
+binarynode* BST_insert(BST* bst, void* x) {
+
+	binarynode* n = NULL;
 
 	if (bst && x) {
 
-		binarynode* n = binarynode_create(x, bst->element_size);
+		n = binarynode_create(x, bst->element_size);
 		if (n) {
 
 			if (!bst->root) {
@@ -107,18 +109,20 @@ void BST_insert(BST* bst, void* x) {
 			}
 		}
 	}
-	return;
+	return n;
 }
 
 /**
  * Removes the value x from the BST, if it is present
  */
-void BST_remove(BST* bst, void* x) {
+binarynode* BST_remove(BST* bst, void* x) {
+
+	binarynode* father = NULL;
 
 	if (bst && x) {
 
 		binarynode* x_node = BST_search(bst, x);
-		binarynode* father = binarynode_get_father(x_node);
+		father = binarynode_get_father(x_node);
 
 		if (x_node) {
 
@@ -227,11 +231,12 @@ void BST_remove(BST* bst, void* x) {
 				}
 			}
 			
+			father = binarynode_get_father(x_node);
 			// Delete the node (physical deletion)
 			binarynode_delete(&x_node);
 		}
 	}
-	return;
+	return father;
 }
 
 /**
@@ -589,6 +594,14 @@ bool BST_is_empty(BST* bst) {
 void* BST_get_compare_func(BST* bst) {
 
 	return bst ? bst->compare : NULL;
+}
+
+/**
+ * Returns the height of the tree bst
+ */
+size_t BST_get_height(BST* bst) {
+
+	return bst ? binarynode_get_height(bst->root) : 0;
 }
 
 /**

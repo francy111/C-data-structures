@@ -131,6 +131,7 @@
     <ClCompile Include="src\linear\node.c" />
     <ClCompile Include="src\linear\stack.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\non-linear\AVL.c" />
     <ClCompile Include="src\non-linear\binarynode.c" />
     <ClCompile Include="src\non-linear\BST.c" />
   </ItemGroup>
@@ -138,6 +139,7 @@
     <ClInclude Include="include\linear\linkedlist.h" />
     <ClInclude Include="include\linear\node.h" />
     <ClInclude Include="include\linear\stack.h" />
+    <ClInclude Include="include\non-linear\AVL.h" />
     <ClInclude Include="include\non-linear\binarynode.h" />
     <ClInclude Include="include\non-linear\BST.h" />
   </ItemGroup>

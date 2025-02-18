@@ -148,7 +148,23 @@ binarynode* binarynode_get_right_child(binarynode* bn) {
 /**
  * Checks if the node is a leaf or not (0 - 1 and 2 children respectively)
  */
-bool binarynode_is_lead(binarynode* bt) {
+bool binarynode_is_leaf(binarynode* bn) {
 
-	return bt ? (!bt->left && !bt->right) : false;
+	return bn ? (!bn->left && !bn->right) : false;
+}
+
+/**
+ * Returns the height of the tree whose root is bn
+ */
+int binarynode_get_height(binarynode* bn) {
+
+	return bn ? 1 + max(binarynode_get_height(bn->left), binarynode_get_height(bn->right)) : 0;
+}
+
+/**
+ * Returns the balance of the tree whose root is bn
+ */
+int binarynode_get_balance(binarynode* bn) {
+
+	return bn ? binarynode_get_height(bn->left) - binarynode_get_height(bn->right) : 0;
 }

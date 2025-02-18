@@ -32,41 +32,51 @@ void binarynode_delete(binarynode** bn);
 /**
  * Returns the stored value
  */
-void* binarynode_get_value(binarynode* bt);
+void* binarynode_get_value(binarynode* bn);
 
 /**
  * Sets the second binary node as father of the first
  */
-void binarynode_set_father(binarynode* bt, binarynode* father);
+void binarynode_set_father(binarynode* bn, binarynode* father);
 
 /**
  * Sets the second binary node as left child of the first
  */
-void binarynode_set_left_child(binarynode* bt, binarynode* left);
+void binarynode_set_left_child(binarynode* bn, binarynode* left);
 
 /**
  * Sets the second binary node as right child of the first
  */
-void binarynode_set_right_child(binarynode* bt, binarynode* right);
+void binarynode_set_right_child(binarynode* bn, binarynode* right);
 
 /**
  * Returns the father
  */
-binarynode* binarynode_get_father(binarynode* bt);
+binarynode* binarynode_get_father(binarynode* bn);
 
 /**
  * Returns the left child
  */
-binarynode* binarynode_get_left_child(binarynode* bt);
+binarynode* binarynode_get_left_child(binarynode* bn);
 
 /**
  * Returns the right child
  */
-binarynode* binarynode_get_right_child(binarynode* bt);
+binarynode* binarynode_get_right_child(binarynode* bn);
 
 /**
  * Checks if the node is a leaf or not (0 - 1 and 2 children respectively)
  */
-bool binarynode_is_lead(binarynode* bt);
+bool binarynode_is_leaf(binarynode* bn);
+
+/**
+ * Returns the height of the tree whose root is bt
+ */
+int binarynode_get_height(binarynode* bn);
+
+/**
+ * Returns the balance of the tree whose root is bt
+ */
+int binarynode_get_balance(binarynode* bn);
 
 #endif

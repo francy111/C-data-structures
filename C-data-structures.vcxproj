@@ -127,21 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\linear\clinkedlist.c" />
     <ClCompile Include="src\linear\linkedlist.c" />
     <ClCompile Include="src\linear\node.c" />
+    <ClCompile Include="src\linear\queue.c" />
     <ClCompile Include="src\linear\stack.c" />
     <ClCompile Include="src\main.c" />
-    <ClCompile Include="src\non-linear\AVL.c" />
-    <ClCompile Include="src\non-linear\binarynode.c" />
-    <ClCompile Include="src\non-linear\BST.c" />
+    <ClCompile Include="src\non-linear\adjecencylistgraph.c" />
+    <ClCompile Include="src\non-linear\edgelistgraph.c" />
+    <ClCompile Include="src\non-linear\matrixgraph.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\linear\clinkedlist.h" />
     <ClInclude Include="include\linear\linkedlist.h" />
     <ClInclude Include="include\linear\node.h" />
+    <ClInclude Include="include\linear\queue.h" />
     <ClInclude Include="include\linear\stack.h" />
-    <ClInclude Include="include\non-linear\AVL.h" />
-    <ClInclude Include="include\non-linear\binarynode.h" />
-    <ClInclude Include="include\non-linear\BST.h" />
+    <ClInclude Include="include\non-linear\graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

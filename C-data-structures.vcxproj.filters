@@ -21,9 +21,33 @@
     <ClCompile Include="src\non-linear\binarynode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\non-linear\BST.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\linear\stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\linear\linkedlist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\linear\node.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\non-linear\binarynode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\non-linear\BST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\linear\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\linear\linkedlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\linear\node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

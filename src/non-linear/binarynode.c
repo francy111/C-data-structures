@@ -115,7 +115,7 @@ void binarynode_set_left_child(binarynode* bn, binarynode* left) {
 /**
  * Sets the second binary node as right child of the first
  */
-void binarynode_set_rigth_child(binarynode* bn, binarynode* right) {
+void binarynode_set_right_child(binarynode* bn, binarynode* right) {
 
 	if (bn) bn->right = right;
 	return;
@@ -140,7 +140,15 @@ binarynode* binarynode_get_left_child(binarynode* bn) {
 /**
  * Returns the right child
  */
-binarynode* binarynode_get_rigth_child(binarynode* bn) {
+binarynode* binarynode_get_right_child(binarynode* bn) {
 
 	return bn ? bn->right : NULL;
+}
+
+/**
+ * Checks if the node is a leaf or not (0 - 1 and 2 children respectively)
+ */
+bool binarynode_is_lead(binarynode* bt) {
+
+	return bt ? (!bt->left && !bt->right) : false;
 }

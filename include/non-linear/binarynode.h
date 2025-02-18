@@ -10,6 +10,7 @@
 #define BINARYNODE__H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 /** 
  * Struct that implements a binary node, that can be used in binary trees
@@ -46,7 +47,7 @@ void binarynode_set_left_child(binarynode* bt, binarynode* left);
 /**
  * Sets the second binary node as right child of the first
  */
-void binarynode_set_rigth_child(binarynode* bt, binarynode* right);
+void binarynode_set_right_child(binarynode* bt, binarynode* right);
 
 /**
  * Returns the father
@@ -61,7 +62,11 @@ binarynode* binarynode_get_left_child(binarynode* bt);
 /**
  * Returns the right child
  */
-binarynode* binarynode_get_rigth_child(binarynode* bt);
+binarynode* binarynode_get_right_child(binarynode* bt);
 
+/**
+ * Checks if the node is a leaf or not (0 - 1 and 2 children respectively)
+ */
+bool binarynode_is_lead(binarynode* bt);
 
 #endif

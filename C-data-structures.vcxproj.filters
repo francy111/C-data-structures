@@ -18,48 +18,24 @@
     <ClCompile Include="src\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\linear\linkedlist.c">
+    <ClCompile Include="src\non-linear\hashmap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\linear\node.c">
+    <ClCompile Include="src\linear\vector.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\non-linear\matrixgraph.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\non-linear\adjecencylistgraph.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\linear\queue.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\linear\stack.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\linear\clinkedlist.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\non-linear\edgelistgraph.c">
+    <ClCompile Include="src\linear\bitset.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\linear\linkedlist.h">
+    <ClInclude Include="include\non-linear\hashmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\linear\node.h">
+    <ClInclude Include="include\linear\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\non-linear\graph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\linear\queue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\linear\stack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\linear\clinkedlist.h">
+    <ClInclude Include="include\linear\bitset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

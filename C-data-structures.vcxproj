@@ -127,23 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\linear\clinkedlist.c" />
-    <ClCompile Include="src\linear\linkedlist.c" />
-    <ClCompile Include="src\linear\node.c" />
-    <ClCompile Include="src\linear\queue.c" />
-    <ClCompile Include="src\linear\stack.c" />
+    <ClCompile Include="src\linear\bitset.c" />
+    <ClCompile Include="src\linear\vector.c" />
     <ClCompile Include="src\main.c" />
-    <ClCompile Include="src\non-linear\adjecencylistgraph.c" />
-    <ClCompile Include="src\non-linear\edgelistgraph.c" />
-    <ClCompile Include="src\non-linear\matrixgraph.c" />
+    <ClCompile Include="src\non-linear\hashmap.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\linear\clinkedlist.h" />
-    <ClInclude Include="include\linear\linkedlist.h" />
-    <ClInclude Include="include\linear\node.h" />
-    <ClInclude Include="include\linear\queue.h" />
-    <ClInclude Include="include\linear\stack.h" />
-    <ClInclude Include="include\non-linear\graph.h" />
+    <ClInclude Include="include\linear\bitset.h" />
+    <ClInclude Include="include\linear\vector.h" />
+    <ClInclude Include="include\non-linear\hashmap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
